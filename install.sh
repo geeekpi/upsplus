@@ -5,13 +5,18 @@
 . /lib/lsb/init-functions
 
 # check if the network is working properly.
+log_action_msg "Welcome to 52Pi Technology UPS Plus auto-install Program!"
+log_action_msg "More information please visit here:"
+log_action_msg "-----------------------------------------------------"
+log_action_msg "https://wiki.52pi.com/index.php/UPS_Plus_SKU:_EP-0136"
+log_action_msg "-----------------------------------------------------"
 log_action_msg "Start the configuration environment check..."
 ping_result=`ping -c 4 www.github.com &> /dev/null` 
 if [[ $ping_result -ne 0 ]]; then
-	log_warning_msg "Network is not available!"
+	log_failure_msg "Network is not available!"
 	log_warning_msg "Please check the network configuration and try again!"
 else
-	log_action_msg "Network status is ok..."
+	log_success_msg "Network status is ok..."
 fi
 
 # Package check and installation
@@ -24,17 +29,171 @@ install_pkgs()
 log_action_msg "Start the software check..."
 pkgs=`dpkg -l | awk '{print $2}' | egrep ^git$`
 if [[ $pkgs = 'git' ]]; then
-	log_action_msg "Git Package has been installed alreay."
+	log_success_msg "git has been installed."
 else
 	log_action_msg "Installing git package..."
 	install_pkgs
 	if [[ $? -eq 0 ]]; then 
-	   log_action_msg "Package installation successfully."
+	   log_success_msg "Package installation successfully."
 	else
-	   log_warning_msg "Package installation is failed,please install git package manually or check the repository"
+	   log_failure_msg "Package installation is failed,please install git package manually or check the repository"
 	fi
 fi	
 
-# TODO: check python libararies and installation.
+# install pi-ina219 library.
+ina_pkg=`pip3 list | grep ina |awk '{print $1}'`
+if [[ $ina_pkg = 'pi-ina219' ]]; then
+	log_success_msg "pi-ina219 library has been installed"
+else
+	log_action_msg "Installing pi-ina219 library..."
+	pip3 install pi-ina219
+	if [[ $? -eq 0 ]]; then
+	   log_success_msg "pi-ina219 Installation successful."
+	else
+	   log_failure_msg "pi-ina219 installation failed!"
+	   log_warning_msg "Please install it by manual: pip3 install pi-ina219"
+	fi
+fi
+# install smbus2 library.
+smbus2_pkg=`pip3 list | grep smbus2 |awk '{print $1}'`
+if [[ $smbus2_pkg = 'smbus2' ]]; then
+	log_success_msg "smbus2 library has been installed"
+else
+	log_action_msg "Installing smbus2 library..."
+	pip3 install smbus2
+	if [[ $? -eq 0 ]]; then
+           log_success_msg "smbus2 Installation successful."
+	else
+	   log_failure_msg "smbus2 installation failed!"
+	   log_warning_msg "Please install it by manual: pip3 install smbus2"
+	fi
+fi
+
 # TODO: Create daemon service or crontab by creating python scripts. 
+# create bin folder and create python script to detect UPS's status.
+log_action_msg "create $HOME/bin directory..."
+/bin/mkdir -p $HOME/bin
+export PATH=$PATH:$HOME/bin
+
+# Create python script.
+cat > $HOME/bin/upsPlus.py << EOF
+import os
+import time
+import smbus2
+import logging
+from ina219 import INA219,DeviceRangeError
+
+
+# Define I2C bus
+DEVICE_BUS = 1
+
+# Define device i2c slave address.
+DEVICE_ADDR = 0x17
+
+# Set the threshold of UPS automatic power-off to prevent damage caused by battery over-discharge, unit: mV.
+PROTECT_VOLT = 3700  
+
+# Set the sample period, Unit: min default: 2 min.
+SAMPLE_TIME = 2
+
+# Instance INA219 and getting information from it.
+ina = INA219(0.00725, address=0x40)
+ina.configure()
+print("-"*60)
+print("------Current information of the detected Raspberry Pi------")
+print("-"*60)
+print("Raspberry Pi Supply Voltage: %.3f V" % ina.voltage())
+print("Raspberry Pi Current Current Consumption: %.3f V" % ina.current())
+print("Raspberry Pi Current Power Consumption: %.3f V" % ina.current())
+print("-"*60)
+
+# Batteries information
+ina = INA219(0.005, address=0x45)
+ina.configure()
+print("-------------------Batteries information-------------------")
+print("-"*60)
+print("Voltage of Batteries: %.3f V" % ina.voltage())
+try:
+    if ina.current() > 0:
+        print("Battery Current (Charging) Rate: %.3f mA"% (ina.current()))
+        print("Current Battery Power Supplement: %.3f mW"% ina.power())
+    else:
+        print("Battery Current (discharge) Rate: %.3f mA"% (0-ina.current()))
+        print("Current Battery Power Consumption: %.3f mW"% ina.power())
+        print("-"*60)
+except DeviceRangeError:
+     print("-"*60)
+     print('Battery power is too high.')
+
+# Raspberry Pi Communicates with MCU via i2c protocol.
+bus = smbus2.SMBus(DEVICE_BUS)
+
+aReceiveBuf = []
+aReceiveBuf.append(0x00) 
+
+# Read register and add the data to the list: aReceiveBuf
+for i in range(1, 255):
+    aReceiveBuf.append(bus.read_byte_data(DEVICE_ADDR, i))
+
+# Enable Back-to-AC fucntion.
+# Enable: write 1 to register 0x25
+# Disable: write 0 to register 0x25
+
+bus.write_byte_data(DEVICE_ADDR, 25, 1)
+
+BatPinCVolt = aReceiveBuf[6] << 8 | aReceiveBuf[5]
+BatProtectVolt = aReceiveBuf[18] << 8 | aReceiveBuf[17]
+
+if (aReceiveBuf[8] << 8 | aReceiveBuf[7]) > 4000:
+    print('-'*60)
+    print('Currently charging via Type C Port.')
+elif (aReceiveBuf[10] << 8 | aReceiveBuf[9])> 4000:
+    print('-'*60)
+    print('Currently charging via Micro USB Port.')
+else:
+    print('-'*60)
+    print('Currently not charging.')
+# Consider shutting down to save data or send notifications 
+    if BatProtectVolt <(BatPinCVolt-50):
+        print('-'*60)
+        print('The battery is going to dead! Ready to shut down!')
+# It will cut off power when initialized shutdown sequence.
+        bus.write_byte_data(DEVICE_ADDR, 24,240)
+        os.system("sudo sync && sudo halt")
+        while True:
+            time.sleep(10)
+        while True:
+            pass
+
+EOF
+log_action_msg "Create python3 script in location: $HOME/bin/upsPlus.py Successful"
+
+# TODO: add script to crontab 
+log_action_msg "Create crontab list for pi user."
+sed -i '/upsPlus/d' /var/spool/cron/crontabs/pi 2>/dev/null
+echo "* * * * * $HOME/bin/upsPlus.py" | sudo tee -a /var/spool/cron/crontabs/pi
+if [[ $? -eq 0 ]]; then
+	log_action_msg "crontab has been created successful!"
+else
+	log_failure_msg "Create crontab for your $USER failed!!"
+	log_warning_msg "Please create crontab for $USER manually."
+	log_action_msg "Usage: crontab -e -u $USER"
+fi 
+
+# Testing and Greetings
+if [[ -e $HOME/bin/upsPlus.py ]]; then 
+    python3 $HOME/bin/upsPlus.py 
+    if [[ $? -eq 0 ]]; then
+       log_success_msg "UPS Plus Installation is Complete!"
+       log_action_msg "-----------------More Information--------------------"
+       log_action_msg "https://wiki.52pi.com/index.php/UPS_Plus_SKU:_EP-0136"
+       log_action_msg "-----------------------------------------------------"
+    else
+       log_failure_msg "UPS Plus Installation is Incomplete!"
+       log_action_msg "Please visit wiki for more information:"
+       log_action_msg "-----------------------------------------------------"
+       log_action_msg "https://wiki.52pi.com/index.php/UPS_Plus_SKU:_EP-0136"
+       log_action_msg "-----------------------------------------------------"
+    fi 
+fi 
 
