@@ -141,8 +141,10 @@ for i in range(1, 255):
 
 bus.write_byte_data(DEVICE_ADDR, 25, 1)
 
-BatPinCVolt = aReceiveBuf[6] << 8 | aReceiveBuf[5]
-BatProtectVolt = aReceiveBuf[18] << 8 | aReceiveBuf[17]
+# Reset Protect voltage
+bus.write_byte_data(DEVICE_ADDR, 17, PROTECT_VOLT & 0xFF)
+bus.write_byte_data(DEVICE_ADDR, 18, (PROTECT_VOLT >> 8)& 0xFF)
+print("Successfully set the protection voltage to: %d mV" % PROTECT_VOLT)
 
 if (aReceiveBuf[8] << 8 | aReceiveBuf[7]) > 4000:
     print('-'*60)
@@ -153,8 +155,8 @@ elif (aReceiveBuf[10] << 8 | aReceiveBuf[9])> 4000:
 else:
     print('-'*60)
     print('Currently not charging.')
-# Consider shutting down to save data or send notifications 
-    if BatProtectVolt <(BatPinCVolt-50):
+# Consider shutting down to save data or send notifications
+    if ina.voltage() < (PROTECT_VOLT + 200):
         print('-'*60)
         print('The battery is going to dead! Ready to shut down!')
 # It will cut off power when initialized shutdown sequence.
@@ -162,9 +164,6 @@ else:
         os.system("sudo sync && sudo halt")
         while True:
             time.sleep(10)
-        while True:
-            pass
-
 EOF
 log_action_msg "Create python3 script in location: $HOME/bin/upsPlus.py Successful"
 # Upload the battery status to the data platform for subsequent technical support services 
