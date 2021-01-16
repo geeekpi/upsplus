@@ -1,3 +1,4 @@
+# '''Enable Auto-Shutdown Protection Function '''
 import os
 import time
 import smbus2
