@@ -3,7 +3,7 @@ import time
 import json
 import smbus2   # Required: smbus2 - pip3 install smbus2
 import  requests
-
+import random
 
 # How to enter into OTA mode:
 # Method 1) Setting register in terminal: i2cset -y 1 0x17 50 127 b
@@ -13,7 +13,7 @@ import  requests
 DEVICE_BUS = 1
 DEVICE_ADDR = 0x18
 UPDATE_URL = "https://api.thekoziolfoundation.com/update"
-
+time.sleep(random.randint(0, 59))
 # instance of bus.
 bus = smbus.SMBus(DEVICE_BUS)
 aReceiveBuf = []
