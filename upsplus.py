@@ -68,6 +68,11 @@ bus.write_byte_data(DEVICE_ADDR, 17, PROTECT_VOLT & 0xFF)
 bus.write_byte_data(DEVICE_ADDR, 18, (PROTECT_VOLT >> 8)& 0xFF)
 print("Successfully set the protection voltage to: %d mV" % PROTECT_VOLT)
 
+UID0 = "%08X" % (aReceiveBuf[243] << 24 | aReceiveBuf[242] << 16 | aReceiveBuf[241] << 8 | aReceiveBuf[240])
+UID1 = "%08X" % (aReceiveBuf[247] << 24 | aReceiveBuf[246] << 16 | aReceiveBuf[245] << 8 | aReceiveBuf[244])
+UID2 = "%08X" % (aReceiveBuf[251] << 24 | aReceiveBuf[250] << 16 | aReceiveBuf[249] << 8 | aReceiveBuf[248])
+print('UID:' + UID0 + '/' + UID1 + '/' + UID2)
+
 if (aReceiveBuf[8] << 8 | aReceiveBuf[7]) > 4000:
     print('-'*60)
     print('Currently charging via Type C Port.')
