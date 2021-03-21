@@ -234,10 +234,14 @@ EOF
 log_success_msg "Create UPS Plus IoT customer service python script successful" 
 # Add script to crontab 
 log_action_msg "Create crontab list for pi user."
+# delete [IF] exist
 sudo sed -i '/upsPlus/d' /var/spool/cron/crontabs/pi 2>/dev/null
-echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py" | sudo tee -a /var/spool/cron/crontabs/pi
-echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py" | sudo tee -a /var/spool/cron/crontabs/pi
-sudo chown $USER:$USER /var/spool/cron/crontabs/pi
+
+# insert task
+printf '%s\n' '* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py' | crontab -u pi -
+printf '%s\n' '* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py' | crontab -u pi -
+sudo systemctl restart crontab
+
 if [[ $? -eq 0 ]]; then
 	log_action_msg "crontab has been created successful!"
 else
