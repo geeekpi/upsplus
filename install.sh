@@ -237,9 +237,9 @@ log_action_msg "Create crontab list for pi user."
 
 sudo sed -i '/upsPlus/d' /var/spool/cron/crontabs/pi 2>/dev/null
 sudo cp /var/spool/cron/crontabs/pi /tmp/crontab_pi
-echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py" | tee -a /tmp/crontab_pi
-echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py" | tee -a /tmp/crontab_pi
-cat /tmp/crontab_pi | crontab -u pi -
+echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py" | sudo tee -a /tmp/crontab_pi
+echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py" | sudo tee -a /tmp/crontab_pi
+sudo cat /tmp/crontab_pi | crontab -u pi -
 sudo systemctl restart cron
 
 if [[ $? -eq 0 ]]; then
