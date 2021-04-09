@@ -1,6 +1,6 @@
 # ''' Update the status of batteries to IoT platform '''
 import time
-import smbus
+import smbus2
 import requests
 from ina219 import INA219,DeviceRangeError
 import random
@@ -27,7 +27,7 @@ try:
 except DeviceRangeError:
     DATA['BatIddAmps'] = 16000
 
-bus = smbus.SMBus(DEVICE_BUS)
+bus = smbus2.SMBus(DEVICE_BUS)
 
 aReceiveBuf = []
 aReceiveBuf.append(0x00)  
