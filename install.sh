@@ -170,7 +170,7 @@ log_action_msg "Create python3 script in location: $HOME/bin/upsPlus.py Successf
 # Create python file
 cat > $HOME/bin/upsPlus_iot.py << EOF
 import time
-import smbus
+import smbus2
 import requests
 from ina219 import INA219,DeviceRangeError
 import random
@@ -197,7 +197,7 @@ try:
 except DeviceRangeError:
     DATA['BatIddAmps'] = 16000
 
-bus = smbus.SMBus(DEVICE_BUS)
+bus = smbus2.SMBus(DEVICE_BUS)
 
 aReceiveBuf = []
 aReceiveBuf.append(0x00) # 占位符
