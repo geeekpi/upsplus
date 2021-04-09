@@ -15,7 +15,7 @@ DEVICE_ADDR = 0x18
 UPDATE_URL = "https://api.thekoziolfoundation.com/update"
 
 # instance of bus.
-bus = smbus.SMBus(DEVICE_BUS)
+bus = smbus2.SMBus(DEVICE_BUS)
 aReceiveBuf = []
 
 for i in range(240, 252):
