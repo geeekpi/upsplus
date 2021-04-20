@@ -4,7 +4,7 @@ Advanced users can select the functions they need through the function options p
 '''
 
 import time
-import smbus
+import smbus2
 import logging
 from ina219 import INA219,DeviceRangeError
 
@@ -32,7 +32,7 @@ try:
 except DeviceRangeError:
     print('Battery power is too high.')
 
-bus = smbus.SMBus(DEVICE_BUS)
+bus = smbus2.SMBus(DEVICE_BUS)
 
 aReceiveBuf = []
 aReceiveBuf.append(0x00)   # Placeholder
