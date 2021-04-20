@@ -25,8 +25,8 @@ print("-"*60)
 print("------Current information of the detected Raspberry Pi------")
 print("-"*60)
 print("Raspberry Pi Supply Voltage: %.3f V" % ina.voltage())
-print("Raspberry Pi Current Current Consumption: %.3f V" % ina.current())
-print("Raspberry Pi Current Power Consumption: %.3f V" % ina.current())
+print("Raspberry Pi Current Current Consumption: %.3f mA" % ina.current())
+print("Raspberry Pi Current Power Consumption: %.3f mA" % ina.current())
 print("-"*60)
 
 # Batteries information
