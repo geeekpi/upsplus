@@ -103,8 +103,8 @@ print("-"*60)
 print("------Current information of the detected Raspberry Pi------")
 print("-"*60)
 print("Raspberry Pi Supply Voltage: %.3f V" % ina.voltage())
-print("Raspberry Pi Current Current Consumption: %.3f V" % ina.current())
-print("Raspberry Pi Current Power Consumption: %.3f V" % ina.current())
+print("Raspberry Pi Current Current Consumption: %.3f mA" % ina.current())
+print("Raspberry Pi Current Power Consumption: %.3f mW" % ina.power())
 print("-"*60)
 
 # Batteries information
@@ -136,8 +136,8 @@ for i in range(1, 255):
     aReceiveBuf.append(bus.read_byte_data(DEVICE_ADDR, i))
 
 # Enable Back-to-AC fucntion.
-# Enable: write 1 to register 0x25
-# Disable: write 0 to register 0x25
+# Enable: write 1 to register 0x19 == 25
+# Disable: write 0 to register 0x19 == 25
 
 bus.write_byte_data(DEVICE_ADDR, 25, 1)
 
@@ -156,7 +156,7 @@ else:
     print('-'*60)
     print('Currently not charging.')
 # Consider shutting down to save data or send notifications
-    if ina.voltage() < (PROTECT_VOLT + 200):
+    if ((ina.voltage() * 1000) < (PROTECT_VOLT + 200)):
         print('-'*60)
         print('The battery is going to dead! Ready to shut down!')
 # It will cut off power when initialized shutdown sequence.
@@ -215,7 +215,7 @@ DATA['BatFullVolt'] = aReceiveBuf[14] << 8 | aReceiveBuf[13]
 DATA['BatEmptyVolt'] = aReceiveBuf[16] << 8 | aReceiveBuf[15]
 DATA['BatProtectVolt'] = aReceiveBuf[18] << 8 | aReceiveBuf[17]
 DATA['SampleTime'] = aReceiveBuf[22] << 8 | aReceiveBuf[21]
-DATA['AutoPowerOn'] = aReceiveBuf[24]
+DATA['AutoPowerOn'] = aReceiveBuf[25]
 
 DATA['OnlineTime'] = aReceiveBuf[31] << 24 | aReceiveBuf[30] << 16 | aReceiveBuf[29] << 8 | aReceiveBuf[28]
 DATA['FullTime'] = aReceiveBuf[35] << 24 | aReceiveBuf[34] << 16 | aReceiveBuf[33] << 8 | aReceiveBuf[32]
