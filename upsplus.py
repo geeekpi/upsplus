@@ -26,7 +26,7 @@ print("------Current information of the detected Raspberry Pi------")
 print("-"*60)
 print("Raspberry Pi Supply Voltage: %.3f V" % ina.voltage())
 print("Raspberry Pi Current Current Consumption: %.3f mA" % ina.current())
-print("Raspberry Pi Current Power Consumption: %.3f mA" % ina.current())
+print("Raspberry Pi Current Power Consumption: %.3f mW" % ina.power())
 print("-"*60)
 
 # Batteries information
@@ -58,8 +58,8 @@ for i in range(1, 255):
     aReceiveBuf.append(bus.read_byte_data(DEVICE_ADDR, i))
 
 # Enable Back-to-AC fucntion.
-# Enable: write 1 to register 0x25
-# Disable: write 0 to register 0x25
+# Enable: write 1 to register 0x19 == 25
+# Disable: write 0 to register 0x19 == 25
 
 bus.write_byte_data(DEVICE_ADDR, 25, 1)
 
