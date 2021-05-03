@@ -45,7 +45,7 @@ DATA['BatFullVolt'] = aReceiveBuf[14] << 8 | aReceiveBuf[13]
 DATA['BatEmptyVolt'] = aReceiveBuf[16] << 8 | aReceiveBuf[15]
 DATA['BatProtectVolt'] = aReceiveBuf[18] << 8 | aReceiveBuf[17]
 DATA['SampleTime'] = aReceiveBuf[22] << 8 | aReceiveBuf[21]
-DATA['AutoPowerOn'] = aReceiveBuf[24]
+DATA['AutoPowerOn'] = aReceiveBuf[25]
 
 DATA['OnlineTime'] = aReceiveBuf[31] << 24 | aReceiveBuf[30] << 16 | aReceiveBuf[29] << 8 | aReceiveBuf[28]
 DATA['FullTime'] = aReceiveBuf[35] << 24 | aReceiveBuf[34] << 16 | aReceiveBuf[33] << 8 | aReceiveBuf[32]
