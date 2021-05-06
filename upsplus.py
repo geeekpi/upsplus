@@ -83,11 +83,16 @@ else:
     print('-'*60)
     print('Currently not charging.')
 # Consider shutting down to save data or send notifications
-    if ((ina.voltage() * 1000) < (PROTECT_VOLT + 200)):
-        print('-'*60)
-        print('The battery is going to dead! Ready to shut down!')
+    batteryVoltage = ina.voltage()
+    if (str(batteryVoltage)) == ("0.0"):
+        print("Bad battery voltage value")
+    if (str(batteryVoltage)) != ("0.0"):
+        if ((batteryVoltage * 1000) < (PROTECT_VOLT + 200)):
+            print('-'*60)
+            print('The battery is going to dead! Ready to shut down!')
 # It will cut off power when initialized shutdown sequence.
-        bus.write_byte_data(DEVICE_ADDR, 24,240)
-        os.system("sudo sync && sudo halt")
-        while True:
-            time.sleep(10)
+            bus.write_byte_data(DEVICE_ADDR, 24,240)
+            os.system("sudo sync && sudo halt")
+            while True:
+                time.sleep(10)
+
