@@ -12,11 +12,11 @@ else
 	log_success_msg "Crontab for upsPlus has been removed."
 fi
 # Remove $HOME/bin/upsPlus*
-rm -f $HOME/bin/upsPlus*
-if [[ $? -eq 0 ]]; then
-	log_success_msg "Remove $HOME/bin/upsPlus.* successful."
-else
+
+if ! rm -f "$HOME"/bin/upsPlus*; then
 	log_failure_msg "Can not remove $HOME/bin/upsPlus.*, please remove it manully."
+else
+	log_success_msg "Remove $HOME/bin/upsPlus.* successful."
 fi
 # TODO: Greetings
 log_success_msg "52Pi UPS Plus python script has been removed successful"
