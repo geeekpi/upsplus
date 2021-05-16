@@ -3,13 +3,13 @@
 . /lib/lsb/init-functions
 
 # Remove crontab 
-log_action_msg "Remove crontab for $USER"
-sudo sed -i '/upsPlus/d' /var/spool/cron/crontabs/pi
-cron_result=`grep -i upsplus /var/spool/cron/crontabs/pi |wc -l`
+log_action_msg "Remove crontab "
+crontab -l | grep -v 'upsPlus' | crontab -
+cron_result=$(crontab -l | grep -c -i 'upsPlus')
 if [[ $cron_result -gt 0 ]]; then
-	log_failure_msg "Can not remove crontab for $USER, please do it manually."
+	log_failure_msg "Can not remove crontab, please do it manually."
 else
-	log_success_msg "Crontab for $USER has been removed."
+	log_success_msg "Crontab for upsPlus has been removed."
 fi
 # Remove $HOME/bin/upsPlus*
 rm -f $HOME/bin/upsPlus*
