@@ -22,8 +22,8 @@ fi
 # Package check and installation
 install_pkgs()
 {
-	`sudo apt-get update -qq`
-	`sudo apt -y -qq install git`
+	`sudo apt-get -qq update`
+	`sudo apt-get -y -qq install sudo git i2c-tools`
 }
 
 log_action_msg "Start the software check..."
@@ -233,21 +233,22 @@ print(r.text)
 EOF
 log_success_msg "Create UPS Plus IoT customer service python script successful" 
 # Add script to crontab 
-log_action_msg "Create crontab list for pi user."
+log_action_msg "Add into general crontab list."
 
-sudo sed -i '/upsPlus/d' /var/spool/cron/crontabs/pi 2>/dev/null
-sudo cp /var/spool/cron/crontabs/pi /tmp/crontab_pi
-echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py" | sudo tee -a /tmp/crontab_pi
-echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py" | sudo tee -a /tmp/crontab_pi
-sudo cat /tmp/crontab_pi | crontab -u pi -
+crontab -l > /tmp/crontab_upsPlus
+echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py" >> /tmp/crontab_upsPlus
+echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py" >> /tmp/crontab_upsPlus
+crontab /tmp/crontab_upsPlus
+sudo cat /tmp/crontab_upsPlus
+rm /tmp/crontab_upsPlus
 sudo systemctl restart cron
 
 if [[ $? -eq 0 ]]; then
 	log_action_msg "crontab has been created successful!"
 else
-	log_failure_msg "Create crontab for your $USER failed!!"
-	log_warning_msg "Please create crontab for $USER manually."
-	log_action_msg "Usage: crontab -e -u $USER"
+	log_failure_msg "Create crontab failed!!"
+	log_warning_msg "Please create crontab manually."
+	log_action_msg "Usage: crontab -e"
 fi 
 
 # Testing and Greetings
