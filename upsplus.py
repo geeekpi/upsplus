@@ -13,7 +13,7 @@ DEVICE_BUS = 1
 DEVICE_ADDR = 0x17
 
 # Set the threshold of UPS automatic power-off to prevent damage caused by battery over-discharge, unit: mV.
-PROTECT_VOLT = 3700
+PROTECT_VOLT = 3500
 
 # Set the sample period, Unit: min default: 2 min.
 SAMPLE_TIME = 2

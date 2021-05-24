@@ -61,6 +61,7 @@ if [[ $smbus2_pkg = 'smbus2' ]]; then
 else
 	log_action_msg "Installing smbus2 library..."
 	pip3 install smbus2
+	pip3 install smbus
 	if [[ $? -eq 0 ]]; then
            log_success_msg "smbus2 Installation successful."
 	else

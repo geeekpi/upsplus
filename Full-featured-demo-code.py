@@ -65,7 +65,7 @@ else:
     print("Current power status: off")
 
 if aReceiveBuf[24] == 0:
-print('No shutdown countdown!')
+    print('No shutdown countdown!')
 else:
     print("Shutdown countdown: %d sec"% (aReceiveBuf[24]))
 
@@ -95,6 +95,7 @@ print("Version number: %d "% (aReceiveBuf[41] << 8 | aReceiveBuf[40]))
 
 # Set to shut down after 240 seconds (can be reset repeatedly)
 # bus.write_byte_data(DEVICE_ADDR, 24,240)
+bus.write_byte_data(DEVICE_ADDR, 24,240)
 
 # Cancel automatic shutdown
 # bus.write_byte_data(DEVICE_ADDR, 24,0)
@@ -106,9 +107,11 @@ print("Version number: %d "% (aReceiveBuf[41] << 8 | aReceiveBuf[40]))
 # 4) Set to 0 to cancel automatic startup.
 # 5) If this automatic startup is not set, and the battery is exhausted and shut down, the system will resume work when the power is restored as much as possible, but it is not necessarily when the external power supply is plugged in.
 # bus.write_byte_data(DEVICE_ADDR, 25,1)
+bus.write_byte_data(DEVICE_ADDR, 25,1)
 
 # Force restart (simulate power plug, write the corresponding number of seconds, shut down 5 seconds before the end of the countdown, and then turn on at 0 seconds.)
 # bus.write_byte_data(DEVICE_ADDR, 26,30)
+bus.write_byte_data(DEVICE_ADDR, 26, 10)
 
 # Restore factory settings (clear memory, clear learning parameters, can not clear the cumulative running time, used for after-sales purposes.)
 # bus.write_byte_data(DEVICE_ADDR, 27,1)
