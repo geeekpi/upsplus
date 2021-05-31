@@ -7,6 +7,7 @@ Current firmware version:V7
 | :--------:   | :-----:  |
 | V3 | - |
 | V7 | 2021-05-13 |
+| V8 | 2021-05-31 |
 
 Version V3:
 
@@ -16,6 +17,11 @@ Version V7:
 
  - Fix the issue of not able to perform shutdown operation when there is an external power supply.
  - [ Full Voltage and Empty Voltage ] Can be edited manually [#16][1]
+
+Version V8:
+
+ - Fix the problem that the power button cannot be turned off when [Back-To-AC Auto Power up] is set.
+ - Fix an intermittent freeze during 400kHz I2C access.
 
 Known issues being resolved:
 
