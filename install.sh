@@ -236,12 +236,8 @@ log_success_msg "Create UPS Plus IoT customer service python script successful"
 # Add script to crontab 
 log_action_msg "Add into general crontab list."
 
-crontab -l > /tmp/crontab_upsPlus
-echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py" >> /tmp/crontab_upsPlus
-echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py" >> /tmp/crontab_upsPlus
-crontab /tmp/crontab_upsPlus
-sudo cat /tmp/crontab_upsPlus
-rm /tmp/crontab_upsPlus
+(crontab -l 2>/dev/null; echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py") | crontab -
+(crontab -l 2>/dev/null; echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py") | crontab -
 sudo systemctl restart cron
 
 if [[ $? -eq 0 ]]; then
