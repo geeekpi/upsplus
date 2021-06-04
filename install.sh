@@ -3,6 +3,7 @@
 
 # initializing init-functions.
 . /lib/lsb/init-functions
+sudo raspi-config nonint do_i2c 0
 
 # check if the network is working properly.
 log_action_msg "Welcome to 52Pi Technology UPS Plus auto-install Program!"
@@ -55,19 +56,13 @@ else
 	fi
 fi
 # install smbus2 library.
-smbus2_pkg=`pip3 list | grep smbus2 |awk '{print $1}'`
-if [[ $smbus2_pkg = 'smbus2' ]]; then
-	log_success_msg "smbus2 library has been installed"
+log_action_msg "Installing smbus2 library..."
+pip3 install smbus smbus2
+if [[ $? -eq 0 ]]; then
+        log_success_msg "smbus2 Installation successful."
 else
-	log_action_msg "Installing smbus2 library..."
-	pip3 install smbus2
-	pip3 install smbus
-	if [[ $? -eq 0 ]]; then
-           log_success_msg "smbus2 Installation successful."
-	else
-	   log_failure_msg "smbus2 installation failed!"
-	   log_warning_msg "Please install it by manual: pip3 install smbus2"
-	fi
+    log_failure_msg "smbus2 installation failed!"
+    log_warning_msg "Please install it by manual: pip3 install smbus2"
 fi
 
 # TODO: Create daemon service or crontab by creating python scripts. 
@@ -236,8 +231,8 @@ log_success_msg "Create UPS Plus IoT customer service python script successful"
 # Add script to crontab 
 log_action_msg "Add into general crontab list."
 
-(crontab -l 2>/dev/null; echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py") | crontab -
-(crontab -l 2>/dev/null; echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py") | crontab -
+(crontab -l 2>/dev/null; echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py > /tmp/upsPlus.log") | crontab -
+(crontab -l 2>/dev/null; echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py > /tmp/upsPlus_iot.log") | crontab -
 sudo systemctl restart cron
 
 if [[ $? -eq 0 ]]; then
@@ -264,4 +259,3 @@ if [[ -e $HOME/bin/upsPlus.py ]]; then
        log_action_msg "-----------------------------------------------------"
     fi 
 fi 
-
