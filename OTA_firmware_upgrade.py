@@ -36,7 +36,7 @@ else:
     print('Pass the authentication, downloading the latest firmware...')
     req = requests.get(r['url'])
     if req.status_code == 404:
-        print('version not found!)
+        print('version not found!')
         exit(-1)
     with open("/tmp/firmware.bin", "wb") as f:
         f.write(req.content)
