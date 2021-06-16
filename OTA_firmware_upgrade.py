@@ -26,6 +26,8 @@ UID1 = "%08X" % (aReceiveBuf[7] << 24 | aReceiveBuf[6] << 16 | aReceiveBuf[5] <<
 UID2 = "%08X" % (aReceiveBuf[11] << 24 | aReceiveBuf[10] << 16 | aReceiveBuf[9] << 8 | aReceiveBuf[8])
 
 r = requests.post(UPDATE_URL, data={"UID0":UID0, "UID1":UID1, "UID2":UID2})
+# You can also specify your version, so you can rollback/forward to the specified version
+# r = requests.post(UPDATE_URL, data={"UID0":UID0, "UID1":UID1, "UID2":UID2, , "ver":7})
 r = json.loads(r.text)
 if r['code'] != 0:
     print('Can not get the firmware due to:' + r['reason'])
@@ -33,6 +35,9 @@ if r['code'] != 0:
 else:
     print('Pass the authentication, downloading the latest firmware...')
     req = requests.get(r['url'])
+    if req.status_code == 404:
+        print('version not found!)
+        exit(-1)
     with open("/tmp/firmware.bin", "wb") as f:
         f.write(req.content)
     print("Download firmware successful.")
