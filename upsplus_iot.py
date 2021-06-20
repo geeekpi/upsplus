@@ -9,7 +9,7 @@ DEVICE_BUS = 1
 DEVICE_ADDR = 0x17
 PROTECT_VOLT = 3700
 SAMPLE_TIME = 2
-FEED_URL = "https://api.thekoziolfoundation.com/feed"
+FEED_URL = "https://api.52pi.com/feed"
 time.sleep(random.randint(0, 59))
 
 DATA = dict()

@@ -11,7 +11,7 @@ import requests
 # Define device bus and address, and firmware url.
 DEVICE_BUS = 1
 DEVICE_ADDR = 0x18
-UPDATE_URL = "https://api.thekoziolfoundation.com/update"
+UPDATE_URL = "https://api.52pi.com/update"
 
 # instance of bus.
 bus = smbus2.SMBus(DEVICE_BUS)
