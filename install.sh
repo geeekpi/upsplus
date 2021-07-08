@@ -73,6 +73,8 @@ export PATH=$PATH:$HOME/bin
 
 # Create python script.
 cat > $HOME/bin/upsPlus.py << EOF
+#!/usr/bin/env python3
+
 import os
 import time
 import smbus2
@@ -93,29 +95,35 @@ PROTECT_VOLT = 3700
 SAMPLE_TIME = 2
 
 # Instance INA219 and getting information from it.
-ina = INA219(0.00725, address=0x40)
-ina.configure()
+ina_supply = INA219(0.00725, address=0x40)
+ina_supply.configure()
+supply_voltage = ina_supply.voltage()
+supply_current = ina_supply.current()
+supply_power = ina_supply.power()
 print("-"*60)
 print("------Current information of the detected Raspberry Pi------")
 print("-"*60)
-print("Raspberry Pi Supply Voltage: %.3f V" % ina.voltage())
-print("Raspberry Pi Current Current Consumption: %.3f mA" % ina.current())
-print("Raspberry Pi Current Power Consumption: %.3f mW" % ina.power())
+print("Raspberry Pi Supply Voltage: %.3f V" % supply_voltage)
+print("Raspberry Pi Current Current Consumption: %.3f mA" % supply_current)
+print("Raspberry Pi Current Power Consumption: %.3f mW" % supply_power)
 print("-"*60)
 
 # Batteries information
-ina = INA219(0.005, address=0x45)
-ina.configure()
+ina_batt = INA219(0.005, address=0x45)
+ina_batt.configure()
+batt_voltage = ina_batt.voltage()
+batt_current = ina_batt.current()
+batt_power = ina_batt.power()
 print("-------------------Batteries information-------------------")
 print("-"*60)
-print("Voltage of Batteries: %.3f V" % ina.voltage())
+print("Voltage of Batteries: %.3f V" % batt_voltage)
 try:
-    if ina.current() > 0:
-        print("Battery Current (Charging) Rate: %.3f mA"% (ina.current()))
-        print("Current Battery Power Supplement: %.3f mW"% ina.power())
+    if batt_current > 0:
+        print("Battery Current (Charging) Rate: %.3f mA"% batt_current)
+        print("Current Battery Power Supplement: %.3f mW"% batt_power)
     else:
-        print("Battery Current (discharge) Rate: %.3f mA"% (0-ina.current()))
-        print("Current Battery Power Consumption: %.3f mW"% ina.power())
+        print("Battery Current (discharge) Rate: %.3f mA"% batt_current)
+        print("Current Battery Power Consumption: %.3f mW"% batt_power)
         print("-"*60)
 except DeviceRangeError:
      print("-"*60)
@@ -152,7 +160,7 @@ else:
     print('-'*60)
     print('Currently not charging.')
 # Consider shutting down to save data or send notifications
-    if ((ina.voltage() * 1000) < (PROTECT_VOLT + 200)):
+    if ((batt_voltage() * 1000) < (PROTECT_VOLT + 200)):
         print('-'*60)
         print('The battery is going to dead! Ready to shut down!')
 # It will cut off power when initialized shutdown sequence.
@@ -165,6 +173,8 @@ log_action_msg "Create python3 script in location: $HOME/bin/upsPlus.py Successf
 # Upload the battery status to the data platform for subsequent technical support services 
 # Create python file
 cat > $HOME/bin/upsPlus_iot.py << EOF
+#!/usr/bin/env python3
+
 import time
 import smbus2
 import requests
@@ -180,16 +190,20 @@ time.sleep(random.randint(0, 59))
 
 DATA = dict()
 
-ina = INA219(0.00725,address=0x40)
-ina.configure()
-DATA['PiVccVolt'] = ina.voltage()
-DATA['PiIddAmps'] = ina.current()
+ina_supply = INA219(0.00725,address=0x40)
+ina_supply.configure()
+supply_voltage = ina_supply.voltage()
+supply_current = ina_supply.current()
+DATA['PiVccVolt'] = supply_voltage
+DATA['PiIddAmps'] = supply_current
 
-ina = INA219(0.005,address=0x45) 
-ina.configure()
-DATA['BatVccVolt'] = ina.voltage()
+ina_batt = INA219(0.005,address=0x45)
+ina_batt.configure()
+batt_voltage = ina_batt.voltage()
+batt_current = ina_batt.current()
+DATA['BatVccVolt'] = batt_voltage
 try:
-    DATA['BatIddAmps'] = ina.current()
+    DATA['BatIddAmps'] = batt_current
 except DeviceRangeError:
     DATA['BatIddAmps'] = 16000
 
