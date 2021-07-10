@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Description：
 '''This is the demo code for all the functions of UPS Plus.
 Advanced users can select the functions they need through the function options provided in the code below to customize and develop them to meet their needs.
@@ -13,22 +15,29 @@ DEVICE_ADDR = 0x17
 PROTECT_VOLT = 3700
 SAMPLE_TIME = 2
 
-ina = INA219(0.00725,address=0x40)
-ina.configure()
-print("Raspberry Pi power supply voltage: %.3f V" %ina.voltage())
-print("Current current consumption of Raspberry Pi: %.3f mA" %ina.current())
-print("Current power consumption of Raspberry Pi: %.3f mW" %ina.power())
+ina_supply = INA219(0.00725, address=0x40)
+ina_supply.configure()
+supply_voltage = ina_supply.voltage()
+supply_current = ina_supply.current()
+supply_power = ina_supply.power()
+print("Raspberry Pi power supply voltage: %.3f V" % supply_voltage)
+print("Current current consumption of Raspberry Pi: %.3f mA" % supply_current)
+print("Current power consumption of Raspberry Pi: %.3f mW" % supply_power)
 
-ina = INA219(0.005,address=0x45) 
-ina.configure()
-print("Batteries Voltage: %.3f V" % ina.voltage())
+
+ina_batt = INA219(0.005, address=0x45)
+ina_batt.configure()
+batt_voltage = ina_batt.voltage()
+batt_current = ina_batt.current()
+batt_power = ina_batt.power()
+print("Batteries Voltage: %.3f V" % batt_voltage)
 try:
-    if ina.current() > 0:
-        print("Battery current (charging), rate: %.3f mA"% (ina.current()))
-        print("Current battery power supplement: %.3f mW"% ina.power())
+    if batt_current > 0:
+        print("Battery current (charging), rate: %.3f mA" % batt_current)
+        print("Current battery power supplement: %.3f mW" % batt_power)
     else:
-        print("Battery current (discharge), rate: %.3f mA"% (0-ina.current()))
-        print("Current battery power consumption: %.3f mW"% ina.power())
+        print("Battery current (discharge), rate: %.3f mA" % batt_current)
+        print("Current battery power consumption: %.3f mW" % batt_power)
 except DeviceRangeError:
     print('Battery power is too high.')
 

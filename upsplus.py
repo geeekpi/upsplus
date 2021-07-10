@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # '''Enable Auto-Shutdown Protection Function '''
 import os
 import time
@@ -19,29 +21,35 @@ PROTECT_VOLT = 3500
 SAMPLE_TIME = 2
 
 # Instance INA219 and getting information from it.
-ina = INA219(0.00725, address=0x40)
-ina.configure()
+ina_supply = INA219(0.00725, address=0x40)
+ina_supply.configure()
+supply_voltage = ina_supply.voltage()
+supply_current = ina_supply.current()
+supply_power = ina_supply.power()
 print("-"*60)
 print("------Current information of the detected Raspberry Pi------")
 print("-"*60)
-print("Raspberry Pi Supply Voltage: %.3f V" % ina.voltage())
-print("Raspberry Pi Current Current Consumption: %.3f mA" % ina.current())
-print("Raspberry Pi Current Power Consumption: %.3f mW" % ina.power())
+print("Raspberry Pi Supply Voltage: %.3f V" % supply_voltage)
+print("Raspberry Pi Current Current Consumption: %.3f mA" % supply_current)
+print("Raspberry Pi Current Power Consumption: %.3f mW" % supply_power)
 print("-"*60)
 
 # Batteries information
-ina = INA219(0.005, address=0x45)
-ina.configure()
+ina_batt = INA219(0.005, address=0x45)
+ina_batt.configure()
+batt_voltage = ina_batt.voltage()
+batt_current = ina_batt.current()
+batt_power = ina_batt.power()
 print("-------------------Batteries information-------------------")
 print("-"*60)
-print("Voltage of Batteries: %.3f V" % ina.voltage())
+print("Voltage of Batteries: %.3f V" % batt_voltage)
 try:
-    if ina.current() > 0:
-        print("Battery Current (Charging) Rate: %.3f mA"% (ina.current()))
-        print("Current Battery Power Supplement: %.3f mW"% ina.power())
+    if batt_current > 0:
+        print("Battery Current (Charging) Rate: %.3f mA"% batt_current)
+        print("Current Battery Power Supplement: %.3f mW"% batt_power)
     else:
-        print("Battery Current (discharge) Rate: %.3f mA"% (0-ina.current()))
-        print("Current Battery Power Consumption: %.3f mW"% ina.power())
+        print("Battery Current (discharge) Rate: %.3f mA"% batt_current)
+        print("Current Battery Power Consumption: %.3f mW"% batt_power)
         print("-"*60)
 except DeviceRangeError:
      print("-"*60)
@@ -83,11 +91,10 @@ else:
     print('-'*60)
     print('Currently not charging.')
 # Consider shutting down to save data or send notifications
-    batteryVoltage = ina.voltage()
-    if (str(batteryVoltage)) == ("0.0"):
+    if (str(batt_voltage)) == ("0.0"):
         print("Bad battery voltage value")
-    if (str(batteryVoltage)) != ("0.0"):
-        if ((batteryVoltage * 1000) < (PROTECT_VOLT + 200)):
+    if (str(batt_voltage)) != ("0.0"):
+        if ((batt_voltage * 1000) < (PROTECT_VOLT + 200)):
             print('-'*60)
             print('The battery is going to dead! Ready to shut down!')
 # It will cut off power when initialized shutdown sequence.

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # ''' Update the status of batteries to IoT platform '''
 import time
 import smbus2
@@ -14,16 +16,20 @@ time.sleep(random.randint(0, 59))
 
 DATA = dict()
 
-ina = INA219(0.00725,address=0x40)
-ina.configure()
-DATA['PiVccVolt'] = ina.voltage()
-DATA['PiIddAmps'] = ina.current()
+ina_supply = INA219(0.00725,address=0x40)
+ina_supply.configure()
+supply_voltage = ina_supply.voltage()
+supply_current = ina_supply.current()
+DATA['PiVccVolt'] = supply_voltage
+DATA['PiIddAmps'] = supply_current
 
-ina = INA219(0.005,address=0x45)
-ina.configure()
-DATA['BatVccVolt'] = ina.voltage()
+ina_batt = INA219(0.005,address=0x45)
+ina_batt.configure()
+batt_voltage = ina_batt.voltage()
+batt_current = ina_batt.current()
+DATA['BatVccVolt'] = batt_voltage
 try:
-    DATA['BatIddAmps'] = ina.current()
+    DATA['BatIddAmps'] = batt_current
 except DeviceRangeError:
     DATA['BatIddAmps'] = 16000
 
