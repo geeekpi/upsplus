@@ -15,7 +15,7 @@ DEVICE_ADDR = 0x17
 PROTECT_VOLT = 3700
 SAMPLE_TIME = 2
 
-ina_supply = INA219(0.00725, address=0x40)
+ina_supply = INA219(0.00725, busnum=DEVICE_BUS, address=0x40)
 ina_supply.configure()
 supply_voltage = ina_supply.voltage()
 supply_current = ina_supply.current()
@@ -25,7 +25,7 @@ print("Current current consumption of Raspberry Pi: %.3f mA" % supply_current)
 print("Current power consumption of Raspberry Pi: %.3f mW" % supply_power)
 
 
-ina_batt = INA219(0.005, address=0x45)
+ina_batt = INA219(0.005, busnum=DEVICE_BUS, address=0x45)
 ina_batt.configure()
 batt_voltage = ina_batt.voltage()
 batt_current = ina_batt.current()
