@@ -39,6 +39,16 @@ python3 OTA_firmware_upgrade.py
 ```
 When `upgrade` process is finished, it will `shutdown` your Raspberry Pi automatically, and you `need` to disconnect the charger and remove all batteries from UPS and then insert the batteries again, then press the power button to turn on the UPS.
 *** NOTE: Do not assemble UPS with Raspberry Pi with Batteries in it *** 
+
+## Battery List.
+* A list of Batteries used by UPSPlus users community.
+
+| Brand | Model | Volt | mAmp | SAMPLE_TIME | Testing | Time |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| DoublePow | ICR18650 | 3.7 | 2600 | 3 | X | 
+
+Don't forget replace PROTECT_VOLT variable value, from Battery Volt value. Example: Battery 3.6V = 3600
+
 ## FAQ 
 * Q: Why does the battery light go off sometime and lights up in a while?
 - A: This is because the power chip performs battery re-sampling, and the purpose is that the data of inferior batteries is inaccurate during the sampling process.
