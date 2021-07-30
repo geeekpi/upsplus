@@ -95,7 +95,7 @@ PROTECT_VOLT = 3700
 SAMPLE_TIME = 2
 
 # Instance INA219 and getting information from it.
-ina_supply = INA219(0.00725, address=0x40)
+ina_supply = INA219(0.00725, busnum=DEVICE_BUS, address=0x40)
 ina_supply.configure()
 supply_voltage = ina_supply.voltage()
 supply_current = ina_supply.current()
@@ -109,7 +109,7 @@ print("Raspberry Pi Current Power Consumption: %.3f mW" % supply_power)
 print("-"*60)
 
 # Batteries information
-ina_batt = INA219(0.005, address=0x45)
+ina_batt = INA219(0.005, busnum=DEVICE_BUS, address=0x45)
 ina_batt.configure()
 batt_voltage = ina_batt.voltage()
 batt_current = ina_batt.current()
@@ -190,14 +190,14 @@ time.sleep(random.randint(0, 59))
 
 DATA = dict()
 
-ina_supply = INA219(0.00725,address=0x40)
+ina_supply = INA219(0.00725, busnum=DEVICE_BUS, address=0x40)
 ina_supply.configure()
 supply_voltage = ina_supply.voltage()
 supply_current = ina_supply.current()
 DATA['PiVccVolt'] = supply_voltage
 DATA['PiIddAmps'] = supply_current
 
-ina_batt = INA219(0.005,address=0x45)
+ina_batt = INA219(0.005, busnum=DEVICE_BUS, address=0x45)
 ina_batt.configure()
 batt_voltage = ina_batt.voltage()
 batt_current = ina_batt.current()
