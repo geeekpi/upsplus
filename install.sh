@@ -160,7 +160,7 @@ else:
     print('-'*60)
     print('Currently not charging.')
 # Consider shutting down to save data or send notifications
-    if ((batt_voltage() * 1000) < (PROTECT_VOLT + 200)):
+    if ((batt_voltage * 1000) < (PROTECT_VOLT + 200)):
         print('-'*60)
         print('The battery is going to dead! Ready to shut down!')
 # It will cut off power when initialized shutdown sequence.
