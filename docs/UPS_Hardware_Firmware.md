@@ -9,6 +9,7 @@ Current firmware version:V7
 | V7 | 2021-05-13 |
 | V8 | 2021-05-31 |
 | V9 | 2021-07-21 |
+| V10 | 2021-19-02 |
 
 Version V3:
 
@@ -30,10 +31,9 @@ Version V9:
  - [Bug fix] Due to compiler optimization, some execution logic may be skipped in some cases, which does not affect the basic I2C operation, but some readings may be incorrect.
  - [Bug fix] The manual voltage can not be set, please note that the manual setting threshold voltage only affects the charging logic, and does not change the parameters of the battery itself.
 
-Known issues being resolved:
+Version V10:
 
-- [ ] Firmware runs sometimes freeze and time is no longer accumulated.
- 
+ - After 30 days of continuous and multi-faceted testing, the V10 firmware fixes a random freeze issue, mainly as a result of possible interruptions in I2C accesses causing I2C lock-ups, a known issue with ST's ST controllers, using the FAE recommended method to fix.
 
 
   [1]: https://github.com/geeekpi/upsplus/issues/16 "Issue #16"
