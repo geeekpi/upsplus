@@ -45,7 +45,8 @@ When `upgrade` process is finished, it will `shutdown` your Raspberry Pi automat
 
 | Brand | Model | Volt | mAmp | SAMPLE_TIME | Testing | Time |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| DoublePow | ICR18650 | 3.7 | 2600 | 3 | X | 
+| DoublePow | ICR18650 | 3.7 | 2600 | 3 |  | +180days | 
+| GTL EvreFire | ICR18650 | 3.7 | 9900 | 3 | X | 
 
 Don't forget replace PROTECT_VOLT variable value, from Battery Volt value. Example: Battery 3.6V = 3600
 
