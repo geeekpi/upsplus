@@ -41,28 +41,38 @@ else
 	fi
 fi	
 
+# create python virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
 # install pi-ina219 library.
-ina_pkg=`pip3 list | grep ina |awk '{print $1}'`
-if [[ $ina_pkg = 'pi-ina219' ]]; then
-	log_success_msg "pi-ina219 library has been installed"
+log_action_msg "Installing pi-ina219 library..."
+python3 -m pip install pi-ina219
+if [[ $? -eq 0 ]]; then
+   log_success_msg "pi-ina219 installation successful."
 else
-	log_action_msg "Installing pi-ina219 library..."
-	pip3 install pi-ina219
-	if [[ $? -eq 0 ]]; then
-	   log_success_msg "pi-ina219 Installation successful."
-	else
-	   log_failure_msg "pi-ina219 installation failed!"
-	   log_warning_msg "Please install it by manual: pip3 install pi-ina219"
-	fi
+   log_failure_msg "pi-ina219 installation failed!"
+   log_warning_msg "Please install it by manual: python3 -m pip install pi-ina219"
 fi
+
 # install smbus2 library.
 log_action_msg "Installing smbus2 library..."
-pip3 install smbus smbus2
+python3 -m pip install smbus2
 if [[ $? -eq 0 ]]; then
-        log_success_msg "smbus2 Installation successful."
+        log_success_msg "smbus2 installation successful."
 else
     log_failure_msg "smbus2 installation failed!"
-    log_warning_msg "Please install it by manual: pip3 install smbus2"
+    log_warning_msg "Please install it by manual: python3 -m pip install smbus2"
+fi
+
+# install requests library.
+log_action_msg "Installing requests library..."
+python3 -m pip install requests
+if [[ $? -eq 0 ]]; then
+        log_success_msg "requests installation successful."
+else
+    log_failure_msg "requests installation failed!"
+    log_warning_msg "Please install it by manual: python3 -m pip install requests"
 fi
 
 # TODO: Create daemon service or crontab by creating python scripts. 
@@ -245,8 +255,8 @@ log_success_msg "Create UPS Plus IoT customer service python script successful"
 # Add script to crontab 
 log_action_msg "Add into general crontab list."
 
-(crontab -l 2>/dev/null; echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus.py > /tmp/upsPlus.log") | crontab -
-(crontab -l 2>/dev/null; echo "* * * * * /usr/bin/python3 $HOME/bin/upsPlus_iot.py > /tmp/upsPlus_iot.log") | crontab -
+(crontab -l 2>/dev/null; echo "* * * * * $HOME/.venv/bin/python3 $HOME/bin/upsPlus.py > /tmp/upsPlus.log") | crontab -
+(crontab -l 2>/dev/null; echo "* * * * * $HOME/.venv/bin/python3 $HOME/bin/upsPlus_iot.py > /tmp/upsPlus_iot.log") | crontab -
 sudo systemctl restart cron
 
 if [[ $? -eq 0 ]]; then
